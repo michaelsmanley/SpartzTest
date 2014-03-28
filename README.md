@@ -19,8 +19,8 @@ GET /v1/states/<STATE>/cities/<CITY>.json?radius=100
 POST /v1/users/<USER_ID>/visits
 
 {
-	‘city’ : <CITY>,
-	‘state’ : <STATE>
+	'city' : <CITY>,
+	'state' : <STATE>
 }
 ```
 
