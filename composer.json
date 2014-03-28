@@ -1,0 +1,27 @@
+{
+    "name": "msmprojects/spartztest",
+    "description": "Implementation of the programming test given by Spartz Media.",
+    "homepage": "https://bitbucket.org/michaelsmanley/spartztest",
+    "support": {
+        "issues": "https://bitbucket.org/michaelsmanley/spartztest/issues",
+        "source": "https://bitbucket.org/michaelsmanley/spartztest"
+    },
+    "authors": [
+        {
+            "name": "Michael S. Manley",
+            "email": "msm@manley.org",
+            "homepage": "http://manley.org/",
+            "role": "Developer"
+        }
+    ],
+    "license": [
+        "MIT"
+    ],
+    "require": {
+        "slim/slim": "2.*",
+        "monolog/monolog": "1.*",
+        "j4mie/paris": "1.4.*",
+        "codeception/codeception": "*",
+        "robmorgan/phinx": "*"
+    }
+}
