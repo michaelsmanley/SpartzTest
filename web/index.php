@@ -29,7 +29,7 @@ $app->get('/', function () use ($app) {
 $app->get('/v1/states', function () use ($app) {
 	$app->log->debug("get list of states");
 
-	$sts = ORM::for_table('city')->distinct()->select('state')->find_array();
+	$sts = ORM::for_table('city')->distinct()->select('state')->order_by_asc('state')->find_array();
 	$f = function($s) { return "/v1/states/{$s{'state'}}/cities.json"; };
 	$states = array_map($f, $sts);
 
@@ -41,7 +41,15 @@ $app->get('/v1/states', function () use ($app) {
 
 $app->get('/v1/states/:state/cities.json', function ($state) use ($app) {
 	$app->log->debug("get cities in {$state}");
-	echo "get cities in {$state}";
+	
+	$cts = ORM::for_table('city')->distinct()->select('name')->where('state', $state)->order_by_asc('name')->find_array();
+	$f = function($c) { return $c{'name'}; };
+	$cities = array_map($f, $cts);
+
+	$response = $app->response();
+	$response['Content-Type'] = 'application/json';
+	$response->status(200);
+	$response->body(json_encode($cities, JSON_UNESCAPED_SLASHES));
 });
 
 $app->get('/v1/states/:state/cities/:city.json', function ($state, $city) use ($app) {
