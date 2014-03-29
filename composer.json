@@ -20,6 +20,7 @@
     "require": {
         "slim/slim": "2.*",
         "monolog/monolog": "1.*",
+        "flynsarmy/slim-monolog": "dev-master",
         "j4mie/paris": "1.4.*",
         "codeception/codeception": "*",
         "robmorgan/phinx": "*"
