@@ -25,6 +25,6 @@
         "robmorgan/phinx": "*"
     },
     "autoload": {
-        "psr-4": {"MSMP\\": "src/"}
+        "psr-4": {"MSMP\\": "src/MSMP/"}
     }
 }
