@@ -39,4 +39,13 @@ class CityTest extends \Codeception\TestCase\Test
         $this->assertEquals(157, count($nearbyCities));
     }
 
+    function testBogusDistance() {
+        $Chicago = Model::factory('\\MSMP\\Spartz\\City')
+           ->where('name', 'Chicago')
+           ->find_one();
+           
+	    $nearbyCities = $Chicago->nearby(-17);
+	    
+	    $this->assertEmpty($nearbyCities);
+    }
 }

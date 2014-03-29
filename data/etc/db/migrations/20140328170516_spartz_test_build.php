@@ -26,7 +26,7 @@ class SpartzTestBuild extends AbstractMigration
         }
              
         if (! $this->hasTable('visit')) {
-            $visit = $this->table('visit', array('id'=>FALSE));
+            $visit = $this->table('visit');
             $visit->addColumn('user_id', 'integer', array('null'=>FALSE))
                   ->addColumn('city_id', 'integer', array('null'=>FALSE))
                   ->create();
