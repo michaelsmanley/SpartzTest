@@ -13,7 +13,7 @@ class User extends \Model {
         $cids = array();
         foreach ($visits as $visit)
             $cids[] = $visit->id;
-        $cities = Model::factory('City')
+        $cities = \Model::factory('City')
             ->where_in('id', $cids)
             ->find_many();
         return $cities;

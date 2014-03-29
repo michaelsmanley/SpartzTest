@@ -26,5 +26,17 @@ class CityTest extends \Codeception\TestCase\Test
 
         $this->assertEquals(524, count($ILCities));
     }
+    
+    function testChicagoNearby() {
+        $Chicago = Model::factory('\\MSMP\\Spartz\\City')
+           ->where('name', 'Chicago')
+           ->find_one();
+           
+        $this->assertEquals('Chicago', $Chicago->name);
+        
+        $nearbyCities = $Chicago->nearby(50);
+        
+        $this->assertEquals(157, count($nearbyCities));
+    }
 
 }
