@@ -23,5 +23,8 @@
         "j4mie/paris": "1.4.*",
         "codeception/codeception": "*",
         "robmorgan/phinx": "*"
+    },
+    "autoload": {
+        "psr-4": {"MSMP\\": "src/"}
     }
 }

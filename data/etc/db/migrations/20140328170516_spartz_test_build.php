@@ -35,6 +35,7 @@ class SpartzTestBuild extends AbstractMigration
                   ->addForeignKey('city_id', 'city', 'id', array('delete'=> 'CASCADE', 'update'=> 'CASCADE'))
                   ->addIndex(array('user_id'))
                   ->addIndex(array('city_id'))
+                  ->addIndex(array('user_id', 'city_id'), array('unique'=>TRUE))
                   ->save();
         }
     }
