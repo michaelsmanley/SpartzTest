@@ -139,4 +139,4 @@ Unfortunately, due to other obligations, I didn't have the time to put in all of
 - Codeception acceptance tests for each API endpoint. That was the whole point of including Codeception in the first place. 
 - There would be Docblock comments throughout.
 - There would be a Phing build file for running migrations, running tests, generating docs, etc.
-- So much more testing of bad requests, proper HTTP responses, etc.
+- So much more security testing of bad requests, proper HTTP responses, etc. I believe I've mitigated SQL injection attacks, but I really would like to hammer this more to be more certain. A caching strategy would help with misbehaving API clients, etc.
