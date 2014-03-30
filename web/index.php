@@ -44,7 +44,7 @@ $app->get('/v1/states', function () use ($app) {
 
 $app->get('/v1/states/:state/cities.json', function ($state) use ($app) {
     $app->log->debug("get cities in {$state}");
-    
+
     $cities = ORM::for_table('city')
         ->distinct()
         ->select('name')
@@ -68,9 +68,9 @@ $app->get('/v1/states/:state/cities/:city.json', function ($state, $city) use ($
         ->where('name', $city)
         ->where('state', $state)
         ->find_one();
-    
+
     $list = array();
-    if (! empty($city) && (intval($radius) != 0)) {
+    if (($city instanceof \MSMP\Spartz\City) && (intval($radius) != 0)) {
         $cts = $city->nearby($radius);
         $list = array_map(function($c) { return $c->name; }, $cts);
     }
@@ -83,12 +83,35 @@ $app->get('/v1/states/:state/cities/:city.json', function ($state, $city) use ($
 
 $app->get('/v1/users', function () use ($app) {
     $app->log->debug("get list of users");
-    echo "get list of users";
+
+    $users = Model::factory('\\MSMP\\Spartz\\User')
+        ->find_many();
+
+    $list = array_map(function($u) { return $u->as_array(); }, $users);
+
+    $response = $app->response();
+    $response['Content-Type'] = 'application/json';
+    $response->status(200);
+    $response->body(json_encode($list, JSON_UNESCAPED_SLASHES));
 });
 
-$app->get('/v1/users/:user/visits', function ($user) use ($app) {
-    $app->log->debug("get visits for user {$user}");
-    echo "get visits for user {$user}" ;
+$app->get('/v1/users/:uid/visits', function ($uid) use ($app) {
+    $app->log->debug("get visits for user {$uid}");
+
+    $user = Model::factory('\\MSMP\\Spartz\\User')
+        ->where('id', $uid)
+        ->find_one();
+
+    $cities = array();
+    if ($user instanceof \MSMP\Spartz\User)
+        $cities = $user->cities();
+
+    $list = array_map(function($c) { return $c->name; }, $cities);
+
+    $response = $app->response();
+    $response['Content-Type'] = 'application/json';
+    $response->status(200);
+    $response->body(json_encode($list, JSON_UNESCAPED_SLASHES));
 });
 
 $app->post('/v1/users/:user/visits', function ($user) use ($app) {
