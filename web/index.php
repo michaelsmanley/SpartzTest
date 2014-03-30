@@ -11,66 +11,89 @@ ORM::configure('mysql:host=localhost;dbname=spartztest');
 ORM::configure('username', 'spartztest');
 ORM::configure('password', 'spartztest');
 
-
 $app = new \Slim\Slim(array(
-	'log.enabled' => true,
-	'log.level'   => \Slim\Log::DEBUG,
-	'log.writer'  => $logger,
-	'debug'       => true,
-	'mode'        => 'development',
+    'log.enabled' => true,
+    'log.level'   => \Slim\Log::DEBUG,
+    'log.writer'  => $logger,
+    'debug'       => true,
+    'mode'        => 'development',
 ));
 $app->setName('spartztest');
 
 $app->get('/', function () use ($app) {
-	$app->log->debug("redirecting root request");
-	$app->redirect('/v1/states');
+    $app->log->debug("redirecting root request");
+    $app->redirect('/v1/states');
 });
 
 $app->get('/v1/states', function () use ($app) {
-	$app->log->debug("get list of states");
+    $app->log->debug("get list of states");
 
-	$sts = ORM::for_table('city')->distinct()->select('state')->order_by_asc('state')->find_array();
-	$f = function($s) { return "/v1/states/{$s{'state'}}/cities.json"; };
-	$states = array_map($f, $sts);
+    $states = ORM::for_table('city')
+        ->distinct()
+        ->select('state')
+        ->order_by_asc('state')
+        ->find_array();
 
-	$response = $app->response();
-	$response['Content-Type'] = 'application/json';
-	$response->status(200);
-	$response->body(json_encode($states, JSON_UNESCAPED_SLASHES));
+    $list = array_map(function($s) { return "/v1/states/{$s{'state'}}/cities.json"; }, $states);
+
+    $response = $app->response();
+    $response['Content-Type'] = 'application/json';
+    $response->status(200);
+    $response->body(json_encode($list, JSON_UNESCAPED_SLASHES));
 });
 
 $app->get('/v1/states/:state/cities.json', function ($state) use ($app) {
-	$app->log->debug("get cities in {$state}");
-	
-	$cts = ORM::for_table('city')->distinct()->select('name')->where('state', $state)->order_by_asc('name')->find_array();
-	$f = function($c) { return $c{'name'}; };
-	$cities = array_map($f, $cts);
+    $app->log->debug("get cities in {$state}");
+    
+    $cities = ORM::for_table('city')
+        ->distinct()
+        ->select('name')
+        ->where('state', $state)
+        ->order_by_asc('name')
+        ->find_array();
 
-	$response = $app->response();
-	$response['Content-Type'] = 'application/json';
-	$response->status(200);
-	$response->body(json_encode($cities, JSON_UNESCAPED_SLASHES));
+    $list = array_map(function($c) { return $c{'name'}; }, $cities);
+
+    $response = $app->response();
+    $response['Content-Type'] = 'application/json';
+    $response->status(200);
+    $response->body(json_encode($list, JSON_UNESCAPED_SLASHES));
 });
 
 $app->get('/v1/states/:state/cities/:city.json', function ($state, $city) use ($app) {
-	$radius = $app->request->get('radius') ? $app->request->get('radius') : 0;
-	$app->log->debug("get cities within {$radius} miles of {$city} in {$state}");
-	echo "get cities within {$radius} miles of {$city} in {$state}" ;
+    $radius = $app->request->get('radius') ? $app->request->get('radius') : 0;
+    $app->log->debug("get cities within {$radius} miles of {$city} in {$state}");
+
+    $city = Model::factory('\\MSMP\\Spartz\\City')
+        ->where('name', $city)
+        ->where('state', $state)
+        ->find_one();
+    
+    $list = array();
+    if (! empty($city) && (intval($radius) != 0)) {
+        $cts = $city->nearby($radius);
+        $list = array_map(function($c) { return $c->name; }, $cts);
+    }
+
+    $response = $app->response();
+    $response['Content-Type'] = 'application/json';
+    $response->status(200);
+    $response->body(json_encode($list, JSON_UNESCAPED_SLASHES));
 });
 
 $app->get('/v1/users', function () use ($app) {
-	$app->log->debug("get list of users");
-	echo "get list of users";
+    $app->log->debug("get list of users");
+    echo "get list of users";
 });
 
 $app->get('/v1/users/:user/visits', function ($user) use ($app) {
-	$app->log->debug("get visits for user {$user}");
-	echo "get visits for user {$user}" ;
+    $app->log->debug("get visits for user {$user}");
+    echo "get visits for user {$user}" ;
 });
 
 $app->post('/v1/users/:user/visits', function ($user) use ($app) {
-	$app->log->debug("add visit for user {$user}");
-	echo "add visit for user {$user}" ;
+    $app->log->debug("add visit for user {$user}");
+    echo "add visit for user {$user}" ;
 });
 
 $app->run();
