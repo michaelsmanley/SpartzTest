@@ -8,6 +8,10 @@ class User extends \Model {
         return $this->has_many('\\MSMP\\Spartz\\Visit'); 
     }
 
+    public function full_name() {
+        return $this->first_name . ' ' . $this->last_name;
+    }
+
     public function cities() {
         $visits = $this->visits()->find_many();
         $cids = array();
